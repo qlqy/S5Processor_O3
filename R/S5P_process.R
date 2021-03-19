@@ -141,10 +141,10 @@ S5P_process <- function(input, product, my_res, my_aoi, extent_only,
     } else {
       fillvalue <- 9.96921e+36
     }
-    # read the data values, along with the latitude_ccd_ccd and longitude_ccd information
+    # read the data values, along with the latitude and longitude information
     vals <- ncdf4::ncvar_get(nc, attributes(nc$var)$names[user_input])
-    lat <- ncdf4::ncvar_get(nc, "PRODUCT/latitude_ccd")
-    lon <- ncdf4::ncvar_get(nc, "PRODUCT/longitude_ccd")
+    lat <- ncdf4::ncvar_get(nc, "PRODUCT/latitude")
+    lon <- ncdf4::ncvar_get(nc, "PRODUCT/longitude")
     # set fill values to NA
     vals[vals == fillvalue] <- NA
     # Check if scale factor should be applied
@@ -223,17 +223,17 @@ S5P_process <- function(input, product, my_res, my_aoi, extent_only,
   extent_distance_vertical <- geosphere::distm(c(raster::extent(pts)[1], raster::extent(pts)[3]),
                                     c(raster::extent(pts)[1], raster::extent(pts)[4]),
                                     fun = geosphere::distHaversine)
-  # BUT: longitude distance depends on latitude_ccd
+  # BUT: longitude distance depends on latitude
   # create new lat coordinate in the vertical middle for the western and easter boundary of the extent
   vertical_mid_distance <- (raster::extent(pts)[4] - raster::extent(pts)[3])/2
-  # add vertical middle to minimum latitude_ccd <- get mid latitude_ccd of extent
+  # add vertical middle to minimum latitude <- get mid latitude of extent
   lat_mid <- raster::extent(pts)[3] + vertical_mid_distance
   # get total longitudinal distance
   horizontal_distance <- raster::extent(pts)[2] - raster::extent(pts)[1]
   # Check if horizontal distance is > 180; if yes we need to manually calculate the distance since it always takes the
   # shortest route to two points
   if (horizontal_distance > 180){
-    # get distance for one horizontal degree in given latitude_ccd
+    # get distance for one horizontal degree in given latitude
     one_degree_horizontal_distance <- geosphere::distm(c(1, lat_mid),
                                             c(2, lat_mid),
                                             fun = geosphere::distHaversine)
